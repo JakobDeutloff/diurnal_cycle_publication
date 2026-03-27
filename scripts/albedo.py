@@ -1,6 +1,5 @@
 # %%
 import matplotlib.pyplot as plt
-import xarray as xr
 from src.read_data import read_albedo
 
 # %%

@@ -1,5 +1,4 @@
 # %%
-import xarray as xr
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap, LogNorm
 from src.read_data import read_snapshot_data

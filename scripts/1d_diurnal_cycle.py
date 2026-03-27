@@ -103,7 +103,7 @@ ax.legend(handles, labels, frameon=False)
 ax.spines[["top", "right"]].set_visible(False)
 ax.set_xticks([6, 12, 18])
 ax.set_yticks([0.001, 0.002, 0.003])
-fig.savefig("mean_dc.pdf", bbox_inches="tight")
+fig.savefig("plots/mean_dc.pdf", bbox_inches="tight")
 
 # %% calculate total cf
 total_cf_ccic = {}

@@ -1,0 +1,10 @@
+matplotlib
+numpy
+pandas
+scipy
+tqdm
+xarray
+dask
+netcdf4
+zarr
+ccic

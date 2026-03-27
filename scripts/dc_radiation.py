@@ -1,5 +1,4 @@
 # %%
-import xarray as xr
 import matplotlib.pyplot as plt
 from src.read_data import read_sw_in, read_lw_out
 

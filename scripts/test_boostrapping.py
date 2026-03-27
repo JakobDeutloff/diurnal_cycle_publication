@@ -18,7 +18,6 @@ for i, n in enumerate(n_iterations):
 
 # %% 
 fig, ax = plt.subplots(figsize=(6,4))
-
 ax.plot(n_iterations, mean_feedback, marker='o', color='k', label='Mean')
 ax.fill_between(n_iterations, mean_feedback - std_feedback, mean_feedback + std_feedback, alpha=0.3, color='gray', label=r'$\pm$  $\sigma$')
 ax.set_xscale('log')

@@ -1,11 +1,8 @@
 # %%
-import pickle
 import xarray as xr
 import matplotlib.pyplot as plt
 import numpy as np
-import ccic
 from tqdm import tqdm
-from scipy.stats import linregress
 from src.read_data import read_ccic_histograms, read_gpm_histograms
 
 # %% load hists
