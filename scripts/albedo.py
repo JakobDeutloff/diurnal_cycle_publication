@@ -1,11 +1,10 @@
 # %%
 import matplotlib.pyplot as plt
 import xarray as xr
+from src.read_data import read_albedo
 
 # %%
-albedo_iwp = xr.open_dataset(
-    "/work/bm1183/m301049/diurnal_cycle_dists/binned_hc_albedo_iwp.nc"
-)
+albedo_iwp = read_albedo()
 
 # %% plot albedos 
 fig, ax = plt.subplots(figsize=(6, 5))
@@ -27,5 +26,5 @@ ax.spines[["top", "right"]].set_visible(False)
 cb = fig.colorbar(im, ax=ax, orientation="horizontal", label=r"$\alpha_{\mathrm{cl}}$", pad=0.15, shrink=0.8, aspect=30)
                   
 cb.set_ticks([0.1, 0.45, 0.8])
-fig.savefig('plots/diurnal_cycle/publication/albedo.pdf', bbox_inches='tight')
+fig.savefig('plots/albedo.pdf', bbox_inches='tight')
 # %%

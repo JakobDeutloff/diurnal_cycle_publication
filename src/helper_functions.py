@@ -1,22 +1,8 @@
-from matplotlib.pyplot import hist
 import numpy as np
 import xarray as xr
 from scipy.signal import detrend
 import pandas as pd
 from scipy.stats import linregress
-
-
-def nan_detrend_along_time(da):
-    arr = da.values
-    out = np.full_like(arr, np.nan)
-    # Detrend each bin (column) separately
-    for i in range(arr.shape[0]):
-        y = arr[i, :]
-        mask = np.isfinite(y)
-        if np.sum(mask) > 1:
-            y_detrended = detrend(y[mask])
-            out[i, mask] = y_detrended
-    return xr.DataArray(out, coords=da.coords, dims=da.dims)
 
 
 def nan_detrend(da, dim="iwp"):
@@ -31,38 +17,6 @@ def nan_detrend(da, dim="iwp"):
             trend = slope * x + intercept
             out.loc[{dim: i}] = y - trend
     return out
-
-
-def interpolate_bins(hist, new_bins, name_old_bins):
-    """
-    Interpolates a histogram defined on old bins to new bins using log-space CDF interpolation.
-    Parameters:
-    hist (xr.DataArray): The histogram to interpolate.
-    new_bins (array-like): The new bin edges to interpolate onto.
-    name_old_bins (str): The name of the dimension in hist that corresponds to the old bins.
-    Returns:
-    xr.DataArray: The interpolated histogram on the new bins.
-    """
-    cdf = hist.cumsum(name_old_bins)
-    cdf[name_old_bins] = np.log10(hist[name_old_bins])
-    cdf_int = cdf.interp({name_old_bins: np.log10(new_bins)}).rename(
-        {name_old_bins: "iwp"}
-    )
-    pdf_int = cdf_int.diff("iwp")
-    pdf_int["iwp"] = (new_bins[1:] + new_bins[:-1]) / 2
-    return pdf_int
-
-
-def shift_longitudes(ds, lon_name="longitude"):
-    """Shift longitudes from [-180, 180] to [0, 360]"""
-    lon_shifted = ds[lon_name].values.copy()
-    lon_shifted[ds[lon_name].values < 0] += 360.0
-    if lon_name in ds.dims:
-        ds = ds.assign_coords({lon_name: lon_shifted})
-        ds = ds.sortby(lon_name)
-    else:
-        ds[lon_name].values = lon_shifted
-    return ds
 
 
 def read_ccic_dc(filename):
@@ -80,22 +34,6 @@ def read_ccic_dc(filename):
 
     hists_ccic = xr.concat(hist_list, dim="time")
     return hists_ccic
-
-
-def resample_histograms(hist):
-    hist_monthly = hist.resample(time="1ME").sum()
-    hist_monthly["time"] = pd.to_datetime(hist_monthly["time"].dt.strftime("%Y-%m"))
-    hist_monthly = hist_monthly["hist"] / hist_monthly["hist"].sum("local_time")
-    if len(hist.dims) == 2:
-        hist_monthly = hist_monthly.transpose("local_time", "time")
-    return hist_monthly
-
-
-def normalise_histograms(hist):
-    hist = hist["hist"] / hist["hist"].sum("local_time")
-    if len(hist.dims) == 2:
-        hist = hist.transpose("local_time", "time")
-    return hist
 
 
 def deseason(ts):

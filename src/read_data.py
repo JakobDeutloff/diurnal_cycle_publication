@@ -1,4 +1,5 @@
 import xarray as xr
+import pickle
 
 
 def get_path():
@@ -67,6 +68,14 @@ def read_sw_in():
     path = get_path()
     return xr.open_dataarray(f"{path}SW_in_daily_cycle.nc")
 
+def read_lw_out():
+    """
+    Read the outgoing longwave radiation data.
+    return: xarray.DataArray, the outgoing longwave radiation data
+    """
+    path = get_path()
+    return xr.open_dataarray(f"{path}rlut_cs.nc")
+
 def read_feedback_bs():
     """
     Read the bootstrapped feedback data.
@@ -74,3 +83,37 @@ def read_feedback_bs():
     """
     path = get_path()
     return xr.open_dataarray(f"{path}ccic_bootstrap_feedback_2d.nc")
+
+def read_bs_test():
+    """
+    Read the bootstrapped feedback data for the sample size.
+    return: dict, the bootstrapped feedback data for the sample size tests
+    """
+    path = get_path()
+    with open(f"{path}ccic_bootstrap_feedback_2d_sample_size_test.pkl", "rb") as f:
+        ds_size = pickle.load(f)
+    return ds_size
+
+def read_snapshot_data():
+    """
+    Read the snapshot data for the brightness temperature and ice water path.
+    return: tuple of xarray.Dataset, the brightness temperature and ice water path data
+    """
+    path = get_path()
+    bts = (
+        xr.open_mfdataset(
+            f"{path}snapshot_data/merg_2008010901*.nc4", engine="netcdf4"
+        )
+        .sel(lat=slice(-30, 30))
+        .load()
+    )
+    iwp = (
+        xr.open_mfdataset(
+            f"{path}snapshot_data/ccic_cpcir_2008010901*.zarr", engine="zarr"
+        )
+        .sel(latitude=slice(30, -30))
+        .load()
+    )["tiwp"]
+    iwp = iwp[:, ::-1, :]
+    iwp = iwp.fillna(0)
+    return bts, iwp

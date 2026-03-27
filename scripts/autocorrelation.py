@@ -5,9 +5,10 @@ from src.helper_functions import deseason
 from scipy.signal import detrend
 from scipy.stats import pearsonr
 import numpy as np
+from src.read_data import read_temperature
 
 # %% load era5 surface temp
-temp = xr.open_dataset("/work/bm1183/m301049/era5/monthly/t2m_tropics.nc").t2m
+temp = read_temperature("all")
 
 # %%  detrend and deseasonalize
 temp_detrend = xr.DataArray(detrend(temp), coords=temp.coords, dims=temp.dims)
@@ -44,6 +45,6 @@ for ax, letter in zip(axes, ["a", "b"]):
         fontsize=22,
         fontweight="bold",
     )
-fig.savefig('plots/diurnal_cycle/publication/t2m_autocorrelation.pdf', bbox_inches='tight')
+fig.savefig('plots/autocorrelation.pdf', bbox_inches='tight')
 
 # %%
